@@ -1,52 +1,53 @@
 package com.example.basedemo.ui.common.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material.Colors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.res.colorResource
+import com.example.basedemo.R
 
 @Composable
-fun BaseDemoTheme(
-    darkTheme : Boolean = isSystemInDarkTheme(),
-    content : @Composable () -> Unit
-) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+fun BaseDemoTheme(content : @Composable () -> Unit) {
+    val colors = Colors(
+        primary = colorResource(id = R.color.main500),
+        primaryVariant = colorResource(id = R.color.main500),
+        secondary = colorResource(id = R.color.gray900),
+        secondaryVariant = colorResource(id = R.color.main500),
+        background = colorResource(id = R.color.gray100),
+        surface = colorResource(id = R.color.white),
+        error = colorResource(id = R.color.error_forever),
+        onPrimary = colorResource(id = R.color.black_forever),
+        onSecondary = colorResource(id = R.color.gray100),
+        onBackground = colorResource(id = R.color.gray900),
+        onSurface = colorResource(id = R.color.gray900),
+        onError = colorResource(id = R.color.white),
+        isSystemInDarkTheme()
+    )
+    MaterialTheme(
+        colors = colors
+    ) {
+        CompositionLocalProvider(LocalRippleTheme provides BaseRippleTheme) {
+            content()
         }
     }
+}
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+@Immutable
+private object BaseRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor() = RippleTheme.defaultRippleColor(
+        contentColor = colorResource(id = R.color.gray600),
+        lightTheme = true
+    )
+
+    @Composable
+    override fun rippleAlpha() = RippleTheme.defaultRippleAlpha(
+        contentColor = colorResource(id = R.color.gray600),
+        lightTheme = true
     )
 }
